@@ -394,7 +394,7 @@ let step = 0;
 // ── API ──
 async function claude(prompt, max=2000) {
   const key = window._CAREER_OS_KEY;
-  if (!key || key === 'PASTE_YOUR_API_KEY_HERE') throw new Error('Demo not configured — API key missing');
+  if (!key || key === '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') throw new Error('Demo not configured — API key missing');
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
