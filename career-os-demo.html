@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career OS — Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#08090f; --surface:#0f1018; --surface2:#141622;
+  --border:#1a1e30; --border2:#232840;
+  --text:#d0daf0; --text2:#6b7fa3; --text3:#2e3d5a;
+  --accent:#e8a640; --accent-dim:rgba(232,166,64,0.12);
+  --green:#10b981; --blue:#3b82f6; --purple:#8b5cf6;
+  --gap:#f472b6;
+  --node-role:#3b82f6; --node-skill:#10b981;
+  --node-project:#8b5cf6; --node-outcome:#f59e0b; --node-decision:#ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+
+/* grid bg */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(26,30,48,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(26,30,48,0.6) 1px,transparent 1px);
+  background-size:52px 52px;}
+
+/* ── HEADER ── */
+.hdr{position:relative;z-index:20;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 28px;border-bottom:1px solid var(--border);
+  background:rgba(8,9,15,0.97);flex-shrink:0;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{width:26px;height:26px;border:1.5px solid var(--accent);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;position:relative;}
+.brand-mark::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:50%;}
+.brand-mark::after{content:'';position:absolute;width:1.5px;height:12px;background:var(--accent);
+  top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);opacity:0.4;}
+.brand-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:0.01em;}
+.brand-tag{font-family:'DM Mono',monospace;font-size:8px;color:var(--text2);letter-spacing:0.14em;text-transform:uppercase;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.hdr-right label{font-family:'DM Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:0.08em;text-transform:uppercase;}
+.api-inp{background:var(--surface);border:1px solid var(--border2);color:var(--text);
+  font-family:'DM Mono',monospace;font-size:11px;padding:5px 10px;border-radius:4px;
+  width:220px;outline:none;transition:border-color 0.2s;}
+.api-inp:focus{border-color:var(--accent);}
+.api-inp::placeholder{color:var(--text3);}
+
+/* ── MAIN SPLIT ── */
+.main{position:relative;z-index:5;display:grid;grid-template-columns:1fr 420px;flex:1;overflow:hidden;}
+
+/* ── LEFT: GRAPH PANEL ── */
+.graph-panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;position:relative;}
+.graph-panel-hdr{padding:12px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.panel-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text2);}
+.graph-stage-pills{display:flex;gap:6px;}
+.stage-pill{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;
+  padding:3px 8px;border-radius:20px;border:1px solid var(--border2);color:var(--text3);transition:all 0.3s;}
+.stage-pill.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);}
+.stage-pill.done{border-color:var(--green);color:var(--green);background:rgba(16,185,129,0.08);}
+
+.graph-area{flex:1;position:relative;overflow:hidden;}
+#graphSvgWrap{width:100%;height:100%;position:relative;}
+
+/* insight overlay */
+.insight-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(8,9,15,0.97) 30%);
+  padding:32px 24px 20px;
+  transform:translateY(100%);
+  transition:transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  z-index:10;
+}
+.insight-overlay.visible{transform:translateY(0);}
+.insight-kicker{font-family:'DM Mono',monospace;font-size:8px;color:var(--accent);
+  letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.insight-kicker::before{content:'';width:20px;height:1px;background:var(--accent);}
+.insight-text{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;
+  font-style:italic;line-height:1.55;color:var(--text);}
+.insight-text strong{font-style:normal;font-weight:600;color:var(--accent);}
+.insight-cursor{display:inline-block;width:2px;height:18px;background:var(--accent);
+  vertical-align:middle;animation:blink 0.9s infinite;margin-left:2px;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* graph legend */
+.graph-legend{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:4px;z-index:5;}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;
+  font-size:8px;color:var(--text2);letter-spacing:0.05em;text-transform:uppercase;opacity:0;transition:opacity 0.4s;}
+.leg-item.show{opacity:1;}
+.leg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+/* node tooltip */
+.ntip{position:absolute;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:6px;padding:8px 12px;font-family:'DM Mono',monospace;font-size:10px;
+  color:var(--text);max-width:200px;pointer-events:none;z-index:100;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);display:none;}
+.ntip-type{font-size:8px;color:var(--text2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px;}
+.ntip-label{font-size:11px;margin-bottom:2px;}
+.ntip-detail{font-size:9px;color:var(--text2);line-height:1.5;}
+
+/* ── RIGHT: CONVERSATION PANEL ── */
+.conv-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--surface);}
+.conv-panel-hdr{padding:12px 20px;border-bottom:1px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;}
+.conv-scroll{flex:1;overflow-y:auto;padding:20px;}
+.conv-scroll::-webkit-scrollbar{width:3px;}
+.conv-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* start screen */
+.start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;gap:20px;padding:32px;text-align:center;}
+.start-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;line-height:1.35;}
+.start-title em{font-style:italic;color:var(--accent);}
+.start-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);
+  letter-spacing:0.07em;line-height:1.9;max-width:320px;}
+.start-btn{margin-top:8px;background:var(--accent);color:var(--bg);border:none;
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
+  padding:14px 32px;border-radius:4px;cursor:pointer;transition:opacity 0.15s;
+  display:flex;align-items:center;gap:8px;}
+.start-btn:hover{opacity:0.88;}
+.start-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.resume-preview{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  padding:14px 16px;max-height:120px;overflow:hidden;position:relative;width:100%;}
+.resume-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;
+  background:linear-gradient(transparent,var(--surface2));}
+.resume-preview p{font-family:'DM Mono',monospace;font-size:9px;color:var(--text2);line-height:1.7;}
+
+/* messages */
+.msg{margin-bottom:20px;animation:msgIn 0.4s ease forwards;}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg-role{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.12em;
+  text-transform:uppercase;margin-bottom:6px;}
+.msg-role.system{color:var(--accent);}
+.msg-role.user{color:var(--text2);}
+.msg-body{font-size:13px;line-height:1.75;color:var(--text);}
+.msg-body.system{background:var(--surface2);border-left:2px solid var(--accent);
+  padding:12px 16px;border-radius:0 6px 6px 0;}
+.msg-body.user{background:rgba(59,130,246,0.06);border-left:2px solid var(--blue);
+  padding:12px 16px;border-radius:0 6px 6px 0;color:var(--text2);}
+.msg-body strong{color:var(--accent);font-weight:500;}
+.msg-body em{font-style:italic;color:var(--text2);}
+
+/* question card */
+.q-card{background:var(--bg);border:1px solid var(--border2);border-radius:8px;
+  padding:18px 20px;margin-bottom:16px;animation:msgIn 0.5s ease forwards;}
+.q-num{font-family:'DM Mono',monospace;font-size:8px;color:var(--accent);
+  letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;
+  font-style:italic;line-height:1.5;color:var(--text);margin-bottom:14px;}
+.q-why{font-size:11px;color:var(--text2);line-height:1.65;font-style:italic;
+  padding-top:10px;border-top:1px solid var(--border);}
+
+/* answer input */
+.ans-wrap{display:flex;gap:8px;margin-bottom:8px;}
+.ans-input{flex:1;background:var(--surface2);border:1px solid var(--border2);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.6;
+  padding:10px 14px;border-radius:6px;outline:none;resize:none;height:72px;
+  transition:border-color 0.2s;}
+.ans-input:focus{border-color:var(--accent);}
+.ans-input::placeholder{color:var(--text3);}
+.ans-btn{background:var(--accent);color:var(--bg);border:none;
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;
+  padding:0 16px;border-radius:6px;cursor:pointer;transition:opacity 0.15s;white-space:nowrap;}
+.ans-btn:hover{opacity:0.85;}
+.ans-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* branch cards */
+.branches{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.branch-card{background:var(--bg);border:1px solid var(--border2);border-radius:8px;
+  padding:16px 18px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.branch-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);transform:scaleY(0);transition:transform 0.3s;transform-origin:bottom;}
+.branch-card:hover::before,.branch-card.selected::before{transform:scaleY(1);}
+.branch-card:hover,.branch-card.selected{border-color:var(--accent);background:var(--accent-dim);}
+.branch-num{font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);
+  letter-spacing:0.1em;margin-bottom:6px;}
+.branch-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;
+  color:var(--accent);margin-bottom:6px;}
+.branch-why{font-size:11px;color:var(--text2);line-height:1.65;}
+.branch-why strong{color:var(--text);font-weight:500;}
+
+/* final reveal */
+.final-card{background:linear-gradient(135deg,rgba(232,166,64,0.08),rgba(139,92,246,0.06));
+  border:1px solid rgba(232,166,64,0.25);border-radius:10px;padding:24px;margin-top:8px;}
+.final-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--accent);
+  letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.final-label::before{content:'';width:16px;height:1px;background:var(--accent);}
+.final-headline{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;
+  font-style:italic;line-height:1.55;color:var(--text);margin-bottom:14px;}
+.final-headline strong{font-style:normal;font-weight:600;color:var(--accent);}
+.final-next{font-family:'DM Mono',monospace;font-size:9px;color:var(--text2);
+  letter-spacing:0.08em;margin-top:14px;padding-top:12px;border-top:1px solid var(--border2);}
+.final-btn{margin-top:10px;background:none;border:1px solid var(--accent);color:var(--accent);
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  padding:8px 18px;border-radius:4px;cursor:pointer;transition:all 0.15s;}
+.final-btn:hover{background:var(--accent-dim);}
+
+/* thinking */
+.thinking{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;
+  font-size:10px;color:var(--accent);padding:8px 0;}
+.thinking-dots span{display:inline-block;width:3px;height:3px;background:var(--accent);
+  border-radius:50%;animation:dp 1.2s infinite;}
+.thinking-dots span:nth-child(2){animation-delay:0.2s;}
+.thinking-dots span:nth-child(3){animation-delay:0.4s;}
+@keyframes dp{0%,100%{opacity:0.2;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
+
+/* progress bar */
+.progress-bar{height:2px;background:var(--border);position:relative;flex-shrink:0;}
+.progress-fill{height:100%;background:var(--accent);width:0%;transition:width 0.8s ease;}
+
+/* graph stats */
+.graph-stats-bar{padding:8px 18px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.gstat{font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:0.06em;}
+.gstat strong{color:var(--text2);font-weight:400;}
+.gstat-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);display:inline-block;margin-right:5px;}
+.gstat-dot.live{background:var(--green);box-shadow:0 0 5px rgba(16,185,129,0.5);}
+
+/* enriched node flash */
+@keyframes nodeFlash{0%{opacity:0.4}50%{opacity:1}100%{opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div>
+      <div class="brand-name">Career OS</div>
+      <div class="brand-tag">Private Demo · By Kishore Kanchanpalli</div>
+    </div>
+  </div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:0.08em;display:flex;align-items:center;gap:8px;">
+    <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 6px rgba(16,185,129,0.5);"></span>
+    Private · Not indexed
+  </div>
+</div>
+<!-- EMBEDDED API KEY — do not share this URL publicly -->
+<script>window._CAREER_OS_KEY = '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';</script>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="main">
+
+  <!-- LEFT: GRAPH -->
+  <div class="graph-panel">
+    <div class="graph-panel-hdr">
+      <div class="panel-label">Knowledge Graph</div>
+      <div class="graph-stage-pills">
+        <div class="stage-pill" id="pill1">Extract</div>
+        <div class="stage-pill" id="pill2">Enrich</div>
+        <div class="stage-pill" id="pill3">Reveal</div>
+      </div>
+    </div>
+    <div class="graph-area">
+      <div id="graphSvgWrap">
+        <div id="graphPlaceholder" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--text3);">
+          <div style="width:48px;height:48px;border:1px dashed var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;">◈</div>
+          <p style="font-family:'DM Mono',monospace;font-size:10px;text-align:center;line-height:1.8;">Your career graph<br>builds here in real time</p>
+        </div>
+      </div>
+      <div class="graph-legend" id="graphLegend">
+        <div class="leg-item" id="leg-role"><div class="leg-dot" style="background:var(--node-role)"></div>Role</div>
+        <div class="leg-item" id="leg-skill"><div class="leg-dot" style="background:var(--node-skill)"></div>Skill</div>
+        <div class="leg-item" id="leg-project"><div class="leg-dot" style="background:var(--node-project)"></div>Project</div>
+        <div class="leg-item" id="leg-outcome"><div class="leg-dot" style="background:var(--node-outcome)"></div>Outcome</div>
+        <div class="leg-item" id="leg-decision"><div class="leg-dot" style="background:var(--node-decision)"></div>Decision</div>
+      </div>
+      <div class="insight-overlay" id="insightOverlay">
+        <div class="insight-kicker">◆ Your core strength</div>
+        <div class="insight-text" id="insightText"></div>
+      </div>
+      <div class="ntip" id="ntip"></div>
+    </div>
+    <div class="graph-stats-bar">
+      <div class="gstat"><span class="gstat-dot" id="liveDot"></span>Nodes: <strong id="nodeCount">0</strong></div>
+      <div class="gstat">Edges: <strong id="edgeCount">0</strong></div>
+      <div class="gstat" id="enrichStat" style="display:none;">Enriched: <strong id="enrichCount" style="color:var(--green)">0</strong></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: CONVERSATION -->
+  <div class="conv-panel">
+    <div class="conv-panel-hdr">
+      <div class="panel-label">Career Intelligence Session</div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:0.08em;" id="stepLabel">Step 0 of 5</div>
+    </div>
+    <div class="conv-scroll" id="convScroll">
+
+      <!-- Start screen -->
+      <div class="start-screen" id="startScreen">
+        <div class="start-title">Your career is a <em>graph</em>,<br>not a document.</div>
+        <div class="start-sub">
+          Paste your resume below. We'll build your career graph,<br>
+          ask 4 questions to sharpen the signal, and surface<br>
+          something about you that you couldn't see yourself.<br><br>
+          Takes about 3 minutes.
+        </div>
+        <textarea id="resumeInput"
+          style="width:100%;height:140px;background:var(--surface2);border:1px solid var(--border2);
+          color:var(--text);font-family:'DM Mono',monospace;font-size:10px;line-height:1.7;
+          padding:12px 14px;border-radius:6px;resize:none;outline:none;transition:border-color 0.2s;"
+          placeholder="Paste your resume text here — copy from Word, PDF, or LinkedIn. The more detail the better.&#10;&#10;Include: roles, dates, what you built, outcomes, decisions you made, anything you're proud of."
+          onfocus="this.style.borderColor='var(--accent)'"
+          onblur="this.style.borderColor='var(--border2)'"></textarea>
+        <button class="start-btn" id="startBtn" onclick="startSession()" style="width:100%;">
+          <span>◆</span> Build My Graph
+        </button>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:0.06em;text-align:center;line-height:1.8;">
+          Private demo · Your resume is processed securely and not stored
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const RESUME = `KISHORE KANCHANPALLI
+Analytics Engineering & Product Data Leader | Dublin, CA
+
+EXECUTIVE SUMMARY
+Analytics engineering leader who builds product data foundations from scratch. At Salesforce, started as a solo technical IC with one report, identified that the entire PLG motion was architecturally blocked by log-based, siloed instrumentation, and built the case for a platform-level fix. Personally designed the event schema architecture, produced instrumentation standards, and drove adoption across engineering and product teams — then hired organically to a 13-person analytics engineering team as value proved out, eventually scaling to a 30-person global organization.
+Core expertise: product instrumentation strategy, event-based schema design, unified customer intelligence systems, self-service analytics platforms. Experienced building governed, low-latency pipelines for real-time activation, behavioral analytics, and AI-assisted workflows.
+
+EXPERIENCE
+Salesforce | Sr. Director, Data Engineering (promoted from Director) | 2020–Present
+- Started as sole analytics engineering IC with one report. Made foundational architectural and modeling decisions.
+- Event schema architecture: Designed and drove adoption of standard event-based instrumentation schema across Salesforce products, replacing log pipelines with governed, low-latency event streams. Personally designed event taxonomy, schema standards, instrumentation requirements.
+- Unified customer intelligence: First time in Salesforce history all products instrument to shared schema — unified customer view with drill-down to feature-level interactions across portfolio.
+- PLG activation: Low-latency event signals enabled attrition modeling, nudge campaigns, behavioral email targeting. Email campaigns achieved 2x open rates. Nudge engine contributed to $100M+ influenced revenue.
+- Self-service analytics: Standardized metrics, governed dashboards enabling Product, GTM, Customer Success to answer behavioral questions without engineering dependency.
+- Governance: GDPR-compliant telemetry governance, privacy-aware instrumentation practices.
+- Executive reporting: Trusted metrics for CEO quarterly business reviews and board-level planning.
+- Team: Grew from solo IC to 13-person analytics engineering team, subsequently expanded to 30-person global org across US and India.
+
+Salesforce | Data Analytics Lead / Sr. Growth Analyst | 2016–2020
+- Primary analytics partner for Voice of Customer and Community products.
+- NPS and community engagement analytics for VP and GM-level stakeholders.
+- Metric drift detection: Built Python/Prophet-based anomaly detection system with global holiday and seasonal awareness — shifted team from reactive to proactive on data quality. Built without being asked.
+- Community product analytics: Cross-product behavioral analysis for newly launched Community product.
+
+Salesforce | Sr. Data Engineer | 2014–2016
+- Built and scaled analytics pipelines for product adoption reporting.
+- Re-architected ETL pipelines for resiliency and restartability — recoverable from failure without full reruns.
+
+Cisco | Sr. Data Engineer / Data Engineer | 2004–2013
+- CFO-level daily financial reporting system — full P&L visibility at nightly cadence across global business units.
+- High-stakes reporting where accuracy and reliability were non-negotiable.
+- Operated central data warehouse serving governed metrics across global finance and operational teams.
+
+THOUGHT LEADERSHIP
+Substack: Agentic Analytics Architecture
+- "Your Semantic Layer Has a Blind Spot"
+- "The Architecture That Makes Data Agents Actually Reliable"
+
+EDUCATION
+MIT — Applied Generative AI for Digital Transformation (2024)
+UC Berkeley — Art and Science of Communication & Storytelling
+Osmania University — B.E. Electrical & Electronics (2003)`;
+
+const QUESTIONS = [
+  {
+    num: "Question 1 of 4",
+    text: "Tell me about something significant you built or changed that nobody asked you to.",
+    why: "Resumes document assignments. This surfaces your initiative pattern — the decisions you made before anyone knew they needed to be made. It's the highest-signal node for predicting how you'll operate in new environments."
+  },
+  {
+    num: "Question 2 of 4",
+    text: "What do colleagues bring to you that they don't bring to anyone else on your team?",
+    why: "This surfaces tacit expertise — the thing you've become known for that exists nowhere in your job description. It's usually the most differentiated thing about you, and the thing you've stopped noticing because it feels obvious."
+  },
+  {
+    num: "Question 3 of 4",
+    text: "Which parts of your work in the last two years made you lose track of time — and which felt like a tax?",
+    why: "Resumes list everything with equal weight. This tells us which nodes are growing edges and which are terminal — what you'll keep developing vs. what you've been executing out of obligation. It determines which branches are actually reachable for you."
+  },
+  {
+    num: "Question 4 of 4",
+    text: "What's the hardest decision you've made in your career — not technically hard, but consequentially hard?",
+    why: "This surfaces your decision architecture — the judgment quality and risk tolerance underlying your trajectory. It's almost always the most revealing thing in the session, and usually something you've never articulated as a career signal before."
+  }
+];
+
+let graphData = null;
+let svgNodeEls = {};
+let svgEdgeEls = [];
+let answers = [];
+let enrichCount = 0;
+let step = 0;
+
+// ── API ──
+async function claude(prompt, max=2000) {
+  const key = window._CAREER_OS_KEY;
+  if (!key || key === 'PASTE_YOUR_API_KEY_HERE') throw new Error('Demo not configured — API key missing');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: max,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const d = await res.json();
+  if (!res.ok) throw new Error(d.error?.message || 'API error');
+  let text = d.content[0].text.replace(/```json|```/g, '').trim();
+  // If response was truncated (max_tokens hit mid-JSON), attempt repair
+  if (d.stop_reason === 'max_tokens') {
+    text = repairJSON(text);
+  }
+  return text;
+}
+
+// Attempt to close truncated JSON by balancing brackets
+function repairJSON(str) {
+  try { JSON.parse(str); return str; } catch(e) {}
+  let s = str.trim();
+  // Count open structures and close them
+  const opens = (s.match(/\[/g)||[]).length - (s.match(/\]/g)||[]).length;
+  const openb = (s.match(/\{/g)||[]).length - (s.match(/\}/g)||[]).length;
+  // Trim trailing comma or incomplete value
+  s = s.replace(/,\s*$/, '');
+  // If we're mid-string, close it
+  const quotes = (s.match(/(?<!\\)"/g)||[]).length;
+  if (quotes % 2 !== 0) s += '"';
+  // Close open objects/arrays
+  for (let i = 0; i < opens; i++) s += ']';
+  for (let i = 0; i < openb; i++) s += '}';
+  try { JSON.parse(s); return s; } catch(e) { return str; }
+}
+
+// ── UTILS ──
+function esc(s) { return (s||'').replace(/'/g,"&#39;").replace(/"/g,"&quot;"); }
+function setProgress(p) { document.getElementById('progressFill').style.width = p + '%'; }
+function setStep(n) {
+  step = n;
+  document.getElementById('stepLabel').textContent = `Step ${n} of 5`;
+  ['pill1','pill2','pill3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'stage-pill';
+    if (n >= (i+1)*2-1 && n < (i+1)*2+1) el.classList.add('active');
+    else if (n >= (i+1)*2) el.classList.add('done');
+  });
+}
+function scrollDown() {
+  const s = document.getElementById('convScroll');
+  setTimeout(() => s.scrollTo({ top: s.scrollHeight, behavior: 'smooth' }), 100);
+}
+function addMsg(role, html, extraClass='') {
+  const s = document.getElementById('convScroll');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.innerHTML = `<div class="msg-role ${role}">${role === 'system' ? '◆ Career OS' : '↳ You'}</div>
+    <div class="msg-body ${role} ${extraClass}">${html}</div>`;
+  s.appendChild(div);
+  scrollDown();
+  return div;
+}
+function addThinking(label='Processing') {
+  const s = document.getElementById('convScroll');
+  const div = document.createElement('div');
+  div.className = 'msg';
+  div.innerHTML = `<div class="msg-role system">◆ Career OS</div>
+    <div class="thinking"><span>${label}</span><div class="thinking-dots"><span></span><span></span><span></span></div></div>`;
+  s.appendChild(div);
+  scrollDown();
+  return div;
+}
+
+// ── START ──
+async function startSession() {
+  const resumeText = document.getElementById('resumeInput')?.value.trim();
+  if (!resumeText || resumeText.length < 100) {
+    alert('Please paste your resume first — the more detail, the better the insight.');
+    return;
+  }
+  document.getElementById('startBtn').disabled = true;
+  document.getElementById('startScreen').style.display = 'none';
+  setStep(1);
+  setProgress(10);
+
+  // Phase 1: Extract graph
+  const t1 = addThinking('Reading your career narrative');
+  try {
+    const raw = await claude(`Extract a career knowledge graph from this resume. Return ONLY valid JSON, no explanation:
+{"nodes":[{"id":"snake_id","type":"role|skill|project|outcome|decision","label":"2-3 words max","detail":"one short sentence","year":"range or null","weight":1-3}],"edges":[{"source":"id","target":"id","relation":"USED|LED_TO|DEMONSTRATED|REQUIRED|INFLUENCED|BUILT_ON"}]}
+Rules: Extract exactly 18 nodes, no more. Weight 3=career-defining, 2=important, 1=supporting. 20-25 edges. Labels strictly 2-3 words.
+Resume:\n${resumeText}`, 4000);
+    graphData = JSON.parse(raw);
+    t1.remove();
+    renderGraph(graphData);
+    document.getElementById('nodeCount').textContent = graphData.nodes.length;
+    document.getElementById('edgeCount').textContent = graphData.edges.length;
+    document.getElementById('liveDot').classList.add('live');
+    setProgress(25);
+    setStep(2);
+    document.getElementById('pill1').className = 'stage-pill done';
+
+    // Show legend
+    ['role','skill','project','outcome','decision'].forEach((t,i) => {
+      setTimeout(() => document.getElementById('leg-'+t).classList.add('show'), i * 120);
+    });
+
+    // Short pause then fire insight
+    await sleep(1800);
+
+    // Phase 2: Generate insight — strength-first
+    const t2 = addThinking('Identifying your core strengths');
+    const insightRaw = await claude(`You are a career intelligence engine. Analyze this career graph and surface the person's single most rare and powerful strength — something they have, not just something they did.
+
+CRITICAL RULES for the insight:
+1. MUST open with the strength stated as a gift: "You have...", "You are one of the few people who...", or "Your ability to... is rare because..."
+2. The first sentence names the STRENGTH boldly and positively — make them feel seen immediately
+3. Second sentence grounds it in evidence from their graph — specific nodes/patterns across at least 3 roles
+4. Third sentence reframes their professional identity based on this strength — what it means they actually are
+5. Use **bold** around the core strength label and the identity reframe
+6. Tone: warm, confident, specific. Like a trusted advisor who truly sees them. NOT analytical or cold.
+7. 2-3 sentences maximum. No hedging. No "it seems like" or "appears to".
+
+Return ONLY valid JSON:
+{"insight": "insight text with **bold** for key phrases", "strength_label": "3-4 word name for their core strength", "pattern_nodes": ["node_id1","node_id2","node_id3"], "identity_reframe": "3-4 word label for their true professional identity"}
+
+Graph nodes: ${JSON.stringify(graphData.nodes.map(n=>({id:n.id,type:n.type,label:n.label,detail:n.detail,weight:n.weight})))}`, 900);
+
+    const insightData = JSON.parse(insightRaw);
+    t2.remove();
+
+    // Highlight strength nodes with warm pulse
+    if (insightData.pattern_nodes) highlightNodes(insightData.pattern_nodes);
+    // Extra celebratory pulse on strength nodes
+    insightData.pattern_nodes?.forEach((id, i) => {
+      const el = svgNodeEls[id]; if (!el) return;
+      setTimeout(() => {
+        el.glow.setAttribute('opacity','0.5');
+        setTimeout(() => el.glow.setAttribute('opacity','0.22'), 600);
+      }, i * 150 + 200);
+    });
+
+    // Type out insight
+    await typeInsight(insightData.insight.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
+    setProgress(40);
+
+    addMsg('system', `That strength is real — and it shows up across <strong>${graphData.nodes.length} nodes</strong> in your graph. Now I want to make it sharper. Four quick questions that surface what resumes always miss. Your answers enrich the graph in real time and make the insight more precise.`);
+
+    await sleep(600);
+    showQuestion(0);
+
+  } catch(err) {
+    t1.remove();
+    addMsg('system', `<span style="color:var(--node-decision)">Something went wrong: ${err.message}. Please refresh and try again.</span>`);
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('startScreen').style.display = 'flex';
+  }
+}
+
+// ── QUESTIONS ──
+function showQuestion(idx) {
+  if (idx >= QUESTIONS.length) { showBranches(); return; }
+  const q = QUESTIONS[idx];
+  const s = document.getElementById('convScroll');
+
+  const div = document.createElement('div');
+  div.className = 'q-card';
+  div.id = `qcard-${idx}`;
+  div.innerHTML = `
+    <div class="q-num">${q.num}</div>
+    <div class="q-text">${q.text}</div>
+    <div class="q-why">${q.why}</div>
+    <div class="ans-wrap" style="margin-top:14px;">
+      <textarea class="ans-input" id="ans-${idx}" placeholder="Take your time — be specific. A single concrete example is more valuable than a general description…"></textarea>
+      <button class="ans-btn" onclick="submitAnswer(${idx})">Submit →</button>
+    </div>`;
+  s.appendChild(div);
+  scrollDown();
+
+  // Focus after animation
+  setTimeout(() => document.getElementById(`ans-${idx}`)?.focus(), 400);
+}
+
+async function submitAnswer(idx) {
+  const val = document.getElementById(`ans-${idx}`)?.value.trim();
+  if (!val) return;
+  answers[idx] = val;
+
+  // Disable input
+  document.getElementById(`ans-${idx}`).disabled = true;
+  document.querySelector(`#qcard-${idx} .ans-btn`).disabled = true;
+
+  addMsg('user', val);
+  setProgress(40 + (idx + 1) * 10);
+
+  // Enrich graph from answer
+  const t = addThinking('Enriching your graph');
+  try {
+    const raw = await claude(`A user answered a career interview question. Extract 1-2 new graph nodes from their answer and identify which existing nodes this answer strengthens.
+
+Question: ${QUESTIONS[idx].text}
+Answer: ${val}
+
+Existing nodes (labels only): ${graphData.nodes.map(n=>n.label).join(', ')}
+
+Return ONLY valid JSON:
+{"new_nodes":[{"id":"enrich_${idx}_1","type":"skill|project|outcome|decision","label":"2-4 words","detail":"one sentence","weight":2}],"strengthens":["existing_node_label1"],"enrichment_insight":"one sentence: what this answer adds to the career picture"}`, 600);
+
+    const enrichData = JSON.parse(raw);
+    t.remove();
+
+    // Add new nodes to graph
+    if (enrichData.new_nodes?.length) {
+      enrichData.new_nodes.forEach(n => {
+        graphData.nodes.push(n);
+        addEnrichedNodeToGraph(n);
+      });
+      enrichCount += enrichData.new_nodes.length;
+      document.getElementById('enrichStat').style.display = 'block';
+      document.getElementById('enrichCount').textContent = enrichCount;
+      document.getElementById('nodeCount').textContent = graphData.nodes.length;
+    }
+
+    if (enrichData.enrichment_insight) {
+      addMsg('system', `<em>✦ Added to your graph:</em> ${enrichData.enrichment_insight}`);
+    }
+
+  } catch(e) {
+    t.remove();
+  }
+
+  await sleep(500);
+
+  // Next question or branches
+  if (idx < 1) {
+    showQuestion(idx + 1);
+  } else if (idx === 1) {
+    // After Q2, show branches
+    setStep(3);
+    document.getElementById('pill2').className = 'stage-pill done';
+    addMsg('system', `Your graph now has <strong>${graphData.nodes.length} nodes</strong>. The pattern is clear enough to show you three non-obvious directions your career is pointing. Each one is derived from your graph topology — not job boards, not generic advice.`);
+    await sleep(800);
+    await showBranches();
+  } else {
+    showQuestion(idx + 1);
+  }
+}
+
+// ── BRANCHES ── 
+async function showBranches() {
+  const t = addThinking('Finding where your strengths point');
+  try {
+    const raw = await claude(`You are a career possibilities guide. Your job is to excite and inspire this person about where their unique strengths could take them — not evaluate them, but celebrate what their career graph makes possible.
+
+Given this career graph and interview answers, identify 3 specific career branches. Each one should feel like an exciting revelation — a direction their strengths make them unusually well-suited for.
+
+Career graph nodes: ${JSON.stringify(graphData.nodes.map(n=>({type:n.type,label:n.label,detail:n.detail,weight:n.weight})))}
+
+Interview answers:
+Q1 (unrequested initiative): ${answers[0]||''}
+Q2 (tacit expertise): ${answers[1]||''}
+
+Return ONLY valid JSON:
+{"branches":[
+  {"title":"4-6 word role title","why":"2 sentences written with genuine excitement: what specific strengths from their graph make them exceptional for this — not just qualified, but rare. Make them feel like this role was built for someone like them.","non_obvious_factor":"the one exciting thing about this branch most people with this background never realize they could reach","timeline":"e.g. immediately reachable / 1-2 year build"}
+]}
+
+Rules: Branch 1 most immediately reachable — feels validating. Branch 2 emerging and exciting — feels energizing. Branch 3 genuinely non-obvious — feels like a revelation. All grounded in their actual graph nodes. Tone: warm, enthusiastic, specific. Like a brilliant mentor who sees their full potential.`, 1100);
+
+    const branchData = JSON.parse(raw);
+    t.remove();
+
+    addMsg('system', `Your strengths point in three directions — each one a real possibility, each one grounded in what you've actually built. Here's what your graph sees:`);
+    await sleep(400);
+
+    const s = document.getElementById('convScroll');
+    const bDiv = document.createElement('div');
+    bDiv.innerHTML = `<div class="msg-role system" style="margin-bottom:8px;">◆ Career OS</div>
+      <div class="branches" id="branchCards">
+        ${branchData.branches.map((b,i) => `
+          <div class="branch-card" id="branch-${i}" onclick="selectBranch(${i})">
+            <div class="branch-num">Direction ${i+1} · ${b.timeline||''}</div>
+            <div class="branch-title">${b.title}</div>
+            <div class="branch-why">${b.why}<br><br><strong>What most people miss:</strong> ${b.non_obvious_factor}</div>
+          </div>`).join('')}
+      </div>`;
+    bDiv.className = 'msg';
+    s.appendChild(bDiv);
+    scrollDown();
+
+    window._branches = branchData.branches;
+    setProgress(75);
+    setStep(4);
+
+    await sleep(500);
+    addMsg('system', `Which of these feels most alive to you? Tap one — then two more quick questions and I'll show you exactly what to do next.`);
+    showQuestion(2);
+
+  } catch(e) {
+    t.remove();
+    addMsg('system', `<span style="color:var(--text2)">Could not generate directions. ${e.message}</span>`);
+  }
+}
+
+let selectedBranch = null;
+function selectBranch(idx) {
+  selectedBranch = idx;
+  document.querySelectorAll('.branch-card').forEach((c,i) => {
+    c.className = 'branch-card' + (i===idx?' selected':'');
+  });
+}
+
+// After Q3 and Q4, show final reveal
+async function showFinalReveal() {
+  setStep(5);
+  document.getElementById('pill3').className = 'stage-pill done';
+  setProgress(95);
+
+  const t = addThinking('Celebrating your career');
+  try {
+    const branch = window._branches?.[selectedBranch||0];
+    const raw = await claude(`You are writing the closing moment of a career celebration session. This person has just shared their career story — now give them the gift of seeing themselves clearly, stated with warmth and confidence.
+
+Everything you write should make them feel proud of what they've built and excited about what's next.
+
+Resume context: Analytics engineering leader, Salesforce Sr. Director, PLG architect, $100M+ revenue impact, 13→30 person team.
+Interview answers:
+- Something built without being asked: ${answers[0]||'not answered'}
+- What colleagues uniquely bring to them: ${answers[1]||'not answered'}
+- What energizes vs drains them: ${answers[2]||'not answered'}
+- Hardest consequential decision: ${answers[3]||'not answered'}
+Direction they chose: ${branch?.title||'not selected'}
+
+Return ONLY valid JSON:
+{
+  "identity": "3-5 word identity that makes them stand taller — their true professional self",
+  "celebration": "2 sentences of pure celebration — what they've built is remarkable, stated with specific evidence and genuine admiration. Use **bold** for the most powerful phrases. No hedging, no caveats.",
+  "what_makes_them_rare": "1 sentence: the single thing about their combination of skills and instincts that very few people have",
+  "first_action": "the single most energizing action they can take in the next 30 days — frame it as an opportunity, not a task",
+  "honest_gap": "1 sentence, framed kindly: the one thing worth building next, positioned as the exciting next chapter not a deficiency"
+}`, 900);
+
+    const final = JSON.parse(raw);
+    t.remove();
+    resetHighlight();
+
+    const s = document.getElementById('convScroll');
+    const fDiv = document.createElement('div');
+    fDiv.className = 'msg';
+    fDiv.innerHTML = `
+      <div class="msg-role system">◆ Career OS · Your Career Portrait</div>
+      <div class="final-card">
+        <div class="final-label">◈ ${final.identity||'Your Career Identity'}</div>
+        <div class="final-headline">${(final.celebration||'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+        <div style="margin-top:16px;padding:14px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:6px;">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--green);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">What makes you rare</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.7;">${final.what_makes_them_rare||''}</div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border2);">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">Your next move · Next 30 Days</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.7;">${final.first_action||''}</div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border2);">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text2);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">What to build next</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.7;font-style:italic;">${final.honest_gap||''}</div>
+        </div>
+        <div class="final-next">
+          Your graph has <strong style="color:var(--text)">${graphData.nodes.length} nodes</strong> and growing.
+          Every answer you give makes it richer. The more it knows, the sharper every insight gets.
+        </div>
+        <button class="final-btn" onclick="alert('Full Career OS demo available — open career-graph-demo.html')">→ Explore Your Full Career Graph</button>
+      </div>`;
+    s.appendChild(fDiv);
+    scrollDown();
+    setProgress(100);
+
+  } catch(e) {
+    t.remove();
+    addMsg('system', `Summary generation error: ${e.message}`);
+  }
+}
+
+// Override submitAnswer for Q3 and Q4 to trigger final reveal after Q4
+const _origSubmit = submitAnswer;
+window.submitAnswer = async function(idx) {
+  const val = document.getElementById(`ans-${idx}`)?.value.trim();
+  if (!val) return;
+  answers[idx] = val;
+  document.getElementById(`ans-${idx}`).disabled = true;
+  document.querySelector(`#qcard-${idx} .ans-btn`).disabled = true;
+  addMsg('user', val);
+  setProgress(40 + (idx + 1) * 10);
+
+  if (idx <= 1) {
+    // Q1, Q2 — enrich graph
+    const t = addThinking('Enriching your graph');
+    try {
+      const raw = await claude(`Extract 1-2 new graph nodes from this interview answer. Return ONLY valid JSON:
+{"new_nodes":[{"id":"enrich_${idx}_1","type":"skill|project|outcome|decision","label":"2-4 words","detail":"one sentence","weight":2}],"enrichment_insight":"one sentence: what this adds to the career picture"}
+Question: ${QUESTIONS[idx].text}
+Answer: ${val}`, 500);
+      const ed = JSON.parse(raw);
+      t.remove();
+      if (ed.new_nodes?.length) {
+        ed.new_nodes.forEach(n => { graphData.nodes.push(n); addEnrichedNodeToGraph(n); });
+        enrichCount += ed.new_nodes.length;
+        document.getElementById('enrichStat').style.display = 'block';
+        document.getElementById('enrichCount').textContent = enrichCount;
+        document.getElementById('nodeCount').textContent = graphData.nodes.length;
+      }
+      if (ed.enrichment_insight) addMsg('system', `<em>✦ Added to your graph:</em> ${ed.enrichment_insight}`);
+    } catch(e) { t.remove(); }
+
+    await sleep(400);
+    if (idx === 0) showQuestion(1);
+    else {
+      setStep(3);
+      document.getElementById('pill2').className = 'stage-pill done';
+      addMsg('system', `That's a great signal. Your graph now has <strong>${graphData.nodes.length} nodes</strong> — enough to show you three directions your strengths make possible.`);
+      await sleep(600);
+      await showBranches();
+    }
+  } else if (idx === 2) {
+    // Q3
+    await sleep(400);
+    addMsg('system', `Love that. One last question — the most revealing one.`);
+    await sleep(400);
+    showQuestion(3);
+  } else if (idx === 3) {
+    // Q4 — final reveal
+    await sleep(600);
+    await showFinalReveal();
+  }
+};
+
+// ── INSIGHT TYPEWRITER ──
+async function typeInsight(html) {
+  const overlay = document.getElementById('insightOverlay');
+  const textEl = document.getElementById('insightText');
+  overlay.classList.add('visible');
+
+  // Strip HTML for typing, re-add after
+  const plain = html.replace(/<[^>]+>/g, '');
+  textEl.innerHTML = '<span class="insight-cursor"></span>';
+
+  let i = 0;
+  await new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (i >= plain.length) {
+        clearInterval(interval);
+        // Replace with formatted version
+        textEl.innerHTML = html;
+        resolve();
+        return;
+      }
+      const cursor = '<span class="insight-cursor"></span>';
+      textEl.innerHTML = plain.slice(0, i+1) + cursor;
+      i++;
+    }, 22);
+  });
+}
+
+// ── GRAPH RENDER ──
+function renderGraph(data) {
+  const wrap = document.getElementById('graphSvgWrap');
+  const placeholder = document.getElementById('graphPlaceholder');
+  if (placeholder) placeholder.style.display = 'none';
+
+  const W = wrap.clientWidth || 700;
+  const H = wrap.clientHeight || 500;
+  const TC = { role:'#3b82f6', skill:'#10b981', project:'#8b5cf6', outcome:'#f59e0b', decision:'#ef4444' };
+  const TR = { role:14, skill:10, project:12, outcome:11, decision:13 };
+
+  const nodes = data.nodes.map(n => ({
+    ...n,
+    x: W/2 + (Math.random()-0.5)*W*0.5,
+    y: H/2 + (Math.random()-0.5)*H*0.5,
+    vx:0, vy:0,
+    r: (TR[n.type]||10) + (n.weight||1)*2
+  }));
+  const nm = {}; nodes.forEach(n => nm[n.id] = n);
+  const edges = data.edges.filter(e => nm[e.source] && nm[e.target]);
+
+  for (let it = 0; it < 160; it++) {
+    for (let i = 0; i < nodes.length; i++) for (let j = i+1; j < nodes.length; j++) {
+      const dx=nodes[j].x-nodes[i].x, dy=nodes[j].y-nodes[i].y;
+      const d=Math.sqrt(dx*dx+dy*dy)||1, f=2600/(d*d);
+      nodes[i].vx-=(dx/d)*f; nodes[i].vy-=(dy/d)*f;
+      nodes[j].vx+=(dx/d)*f; nodes[j].vy+=(dy/d)*f;
+    }
+    edges.forEach(e => {
+      const a=nm[e.source],b=nm[e.target]; if(!a||!b) return;
+      const dx=b.x-a.x, dy=b.y-a.y, d=Math.sqrt(dx*dx+dy*dy)||1;
+      const f=(d-85)*0.05, fx=(dx/d)*f, fy=(dy/d)*f;
+      a.vx+=fx; a.vy+=fy; b.vx-=fx; b.vy-=fy;
+    });
+    nodes.forEach(n => {
+      n.vx+=(W/2-n.x)*0.008; n.vy+=(H/2-n.y)*0.008;
+      n.x+=n.vx*0.6; n.y+=n.vy*0.6; n.vx*=0.7; n.vy*=0.7;
+      n.x=Math.max(n.r+12,Math.min(W-n.r-12,n.x));
+      n.y=Math.max(n.r+12,Math.min(H-n.r-12,n.y));
+    });
+  }
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width',W); svg.setAttribute('height',H);
+  svg.style.cssText='position:absolute;top:0;left:0;';
+
+  const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+  function mkM(id,col){ const m=document.createElementNS('http://www.w3.org/2000/svg','marker');m.setAttribute('id',id);m.setAttribute('markerWidth','6');m.setAttribute('markerHeight','6');m.setAttribute('refX','5');m.setAttribute('refY','3');m.setAttribute('orient','auto');const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d','M0,0 L0,6 L6,3 z');p.setAttribute('fill',col);m.appendChild(p);return m; }
+  defs.appendChild(mkM('ad','#1e2840')); defs.appendChild(mkM('ah','#e8a640'));
+  const gf=document.createElementNS('http://www.w3.org/2000/svg','filter');gf.setAttribute('id','gf');gf.setAttribute('x','-60%');gf.setAttribute('y','-60%');gf.setAttribute('width','220%');gf.setAttribute('height','220%');
+  const fb=document.createElementNS('http://www.w3.org/2000/svg','feGaussianBlur');fb.setAttribute('stdDeviation','5');fb.setAttribute('result','blur');
+  const fm=document.createElementNS('http://www.w3.org/2000/svg','feMerge');const fn1=document.createElementNS('http://www.w3.org/2000/svg','feMergeNode');fn1.setAttribute('in','blur');const fn2=document.createElementNS('http://www.w3.org/2000/svg','feMergeNode');fn2.setAttribute('in','SourceGraphic');fm.appendChild(fn1);fm.appendChild(fn2);gf.appendChild(fb);gf.appendChild(fm);defs.appendChild(gf);svg.appendChild(defs);
+
+  const ntip = document.getElementById('ntip');
+  svgEdgeEls = [];
+
+  // Edges
+  const eG = document.createElementNS('http://www.w3.org/2000/svg','g');
+  edges.forEach(e => {
+    const a=nm[e.source],b=nm[e.target]; if(!a||!b) return;
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',a.x);line.setAttribute('y1',a.y);line.setAttribute('x2',b.x);line.setAttribute('y2',b.y);
+    line.setAttribute('stroke','#1a1e30');line.setAttribute('stroke-width','1.5');line.setAttribute('marker-end','url(#ad)');
+    line.style.opacity='0';line.style.transition='opacity 0.4s,stroke 0.4s';
+    eG.appendChild(line);
+    svgEdgeEls.push({line,sourceId:e.source,targetId:e.target});
+  });
+  svg.appendChild(eG);
+
+  // Nodes
+  const nG = document.createElementNS('http://www.w3.org/2000/svg','g');
+  svgNodeEls = {};
+  nodes.forEach(n => {
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.style.cursor='pointer'; g.style.opacity='0'; g.style.transition='opacity 0.35s';
+    const color=TC[n.type]||'#6b7fa3';
+
+    const glow=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    glow.setAttribute('cx',n.x);glow.setAttribute('cy',n.y);glow.setAttribute('r',n.r+8);
+    glow.setAttribute('fill',color);glow.setAttribute('opacity','0.06');glow.style.transition='opacity 0.4s,fill 0.4s';
+    if(n.weight===3){const a=document.createElementNS('http://www.w3.org/2000/svg','animate');a.setAttribute('attributeName','opacity');a.setAttribute('values','0.06;0.16;0.06');a.setAttribute('dur',(2.5+Math.random()*1.5)+'s');a.setAttribute('repeatCount','indefinite');glow.appendChild(a);}
+    g.appendChild(glow);
+
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',n.x);c.setAttribute('cy',n.y);c.setAttribute('r',n.r);
+    c.setAttribute('fill','#0f1018');c.setAttribute('stroke',color);c.setAttribute('stroke-width',n.weight===3?'2':'1.5');
+    c.style.transition='stroke 0.4s,stroke-width 0.3s,fill 0.3s';
+    g.appendChild(c);
+
+    if(n.weight===3){const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('cx',n.x);dot.setAttribute('cy',n.y);dot.setAttribute('r',3);dot.setAttribute('fill',color);dot.setAttribute('opacity','0.6');g.appendChild(dot);}
+
+    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',n.x);txt.setAttribute('y',n.y+n.r+12);txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('fill','#6b7fa3');txt.setAttribute('font-family','DM Mono,monospace');txt.setAttribute('font-size','8');txt.setAttribute('letter-spacing','0.3');txt.style.transition='fill 0.3s';
+    txt.textContent=n.label.length>18?n.label.slice(0,17)+'…':n.label;
+    g.appendChild(txt);
+
+    svgNodeEls[n.id]={g,circle:c,glow,text:txt,color,n};
+
+    g.addEventListener('mouseenter',ev=>{
+      c.setAttribute('stroke-width','2.5'); glow.setAttribute('opacity','0.2'); txt.setAttribute('fill',color);
+      svgEdgeEls.forEach(({line,sourceId,targetId})=>{if(sourceId===n.id||targetId===n.id){line.setAttribute('stroke',color);line.setAttribute('stroke-width','2');line.setAttribute('marker-end','url(#ah)');}});
+      ntip.style.display='block';
+      ntip.innerHTML=`<div class="ntip-type">${n.type}${n.year?' · '+n.year:''}</div><div class="ntip-label">${n.label}</div><div class="ntip-detail">${n.detail||''}</div>`;
+    });
+    g.addEventListener('mousemove',ev=>{
+      const r=wrap.getBoundingClientRect();
+      let tx=ev.clientX-r.left+12,ty=ev.clientY-r.top-10;
+      if(tx+210>W)tx-=210;
+      ntip.style.left=tx+'px';ntip.style.top=ty+'px';
+    });
+    g.addEventListener('mouseleave',()=>{
+      c.setAttribute('stroke-width',n.weight===3?'2':'1.5');glow.setAttribute('opacity','0.06');txt.setAttribute('fill','#6b7fa3');
+      svgEdgeEls.forEach(({line,sourceId,targetId})=>{if(sourceId===n.id||targetId===n.id){line.setAttribute('stroke','#1a1e30');line.setAttribute('stroke-width','1.5');line.setAttribute('marker-end','url(#ad)');}});
+      ntip.style.display='none';
+    });
+
+    nG.appendChild(g);
+  });
+  svg.appendChild(nG);
+  wrap.appendChild(svg);
+
+  // Staggered entrance
+  const order=['role','decision','skill','project','outcome'];
+  const sorted=[...nodes].sort((a,b)=>(order.indexOf(a.type)||99)-(order.indexOf(b.type)||99));
+  sorted.forEach((n,i)=>setTimeout(()=>{ if(svgNodeEls[n.id])svgNodeEls[n.id].g.style.opacity='1'; },60+i*45));
+  const ed=60+sorted.length*45+180;
+  svgEdgeEls.forEach(({line},i)=>setTimeout(()=>line.style.opacity='1',ed+i*12));
+}
+
+// ── ADD ENRICHED NODE ──
+function addEnrichedNodeToGraph(n) {
+  const wrap = document.getElementById('graphSvgWrap');
+  const svg = wrap.querySelector('svg'); if (!svg) return;
+  const W=parseInt(svg.getAttribute('width')), H=parseInt(svg.getAttribute('height'));
+  const TC={role:'#3b82f6',skill:'#10b981',project:'#8b5cf6',outcome:'#f59e0b',decision:'#ef4444'};
+  const color=TC[n.type]||'#10b981';
+
+  // Random position in outer ring
+  const angle=Math.random()*Math.PI*2;
+  const dist=120+Math.random()*80;
+  const cx=W/2+Math.cos(angle)*dist, cy=H/2+Math.sin(angle)*dist;
+  const r=12;
+
+  const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.style.opacity='0'; g.style.transition='opacity 0.5s';
+  g.style.cursor='pointer';
+
+  const glow=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  glow.setAttribute('cx',cx);glow.setAttribute('cy',cy);glow.setAttribute('r',r+10);
+  glow.setAttribute('fill',color);glow.setAttribute('opacity','0.25');
+  const anim=document.createElementNS('http://www.w3.org/2000/svg','animate');
+  anim.setAttribute('attributeName','opacity');anim.setAttribute('values','0.25;0.08;0.25');
+  anim.setAttribute('dur','2s');anim.setAttribute('repeatCount','3');
+  glow.appendChild(anim);g.appendChild(glow);
+
+  const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',r);
+  c.setAttribute('fill','#0f1018');c.setAttribute('stroke',color);c.setAttribute('stroke-width','2');
+  c.setAttribute('stroke-dasharray','3,2');
+  g.appendChild(c);
+
+  const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.setAttribute('x',cx);txt.setAttribute('y',cy+r+12);txt.setAttribute('text-anchor','middle');
+  txt.setAttribute('fill',color);txt.setAttribute('font-family','DM Mono,monospace');txt.setAttribute('font-size','8');txt.setAttribute('opacity','0.8');
+  txt.textContent=n.label.length>16?n.label.slice(0,15)+'…':n.label;
+  g.appendChild(txt);
+
+  svg.appendChild(g);
+  setTimeout(()=>g.style.opacity='1',50);
+  svgNodeEls[n.id]={g,circle:c,glow,text:txt,color,n};
+}
+
+// ── HIGHLIGHT NODES ──
+function highlightNodes(nodeIds) {
+  const sel=new Set(nodeIds);
+  Object.entries(svgNodeEls).forEach(([id,{circle,glow,text,color,n,g}])=>{
+    if(sel.has(id)){
+      circle.setAttribute('stroke','#e8a640');circle.setAttribute('stroke-width','2.5');
+      glow.setAttribute('fill','#e8a640');glow.setAttribute('opacity','0.2');
+      glow.setAttribute('filter','url(#gf)');text.setAttribute('fill','#e8a640');g.style.opacity='1';
+    } else {
+      g.style.opacity='0.25';text.setAttribute('fill','#2e3d5a');
+    }
+  });
+  svgEdgeEls.forEach(({line,sourceId,targetId})=>{
+    if(sel.has(sourceId)&&sel.has(targetId)){line.setAttribute('stroke','#e8a640');line.setAttribute('stroke-width','2');line.setAttribute('opacity','1');}
+    else{line.setAttribute('opacity','0.12');}
+  });
+  // Pulse selected nodes
+  nodeIds.forEach((id,i)=>{
+    const el=svgNodeEls[id]; if(!el)return;
+    setTimeout(()=>{el.glow.setAttribute('opacity','0.45');setTimeout(()=>el.glow.setAttribute('opacity','0.2'),500);},i*120);
+  });
+}
+
+function resetHighlight() {
+  Object.entries(svgNodeEls).forEach(([id,{circle,glow,text,color,n,g}])=>{
+    circle.setAttribute('stroke',color);circle.setAttribute('stroke-width',n.weight===3?'2':'1.5');
+    glow.setAttribute('fill',color);glow.setAttribute('opacity','0.06');glow.removeAttribute('filter');
+    text.setAttribute('fill','#6b7fa3');g.style.opacity='1';
+  });
+  svgEdgeEls.forEach(({line})=>{line.setAttribute('stroke','#1a1e30');line.setAttribute('stroke-width','1.5');line.setAttribute('opacity','1');});
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+</script>
+</body>
+</html>
